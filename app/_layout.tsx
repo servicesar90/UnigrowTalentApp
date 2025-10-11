@@ -1,24 +1,26 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { Stack } from "expo-router";
+import "../global.css";
+import { Provider as PaperProvider } from "react-native-paper";
+import {Provider} from "react-redux";
+import {getDataStore} from "./Redux/getDataStore"
+import Toast from "react-native-toast-message"
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <PaperProvider>
+      <Provider store={getDataStore}>
+
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="landingpage" options={{ headerShown: false }} />
+        <Stack.Screen name="employee" options={{ headerShown: false }} />
+        <Stack.Screen name="employer" options={{ headerShown: false }} />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+
+      </Provider>
+      <Toast />
+
+    </PaperProvider>
+  )
+
 }
