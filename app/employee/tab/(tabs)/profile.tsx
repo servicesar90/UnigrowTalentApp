@@ -48,7 +48,7 @@ import * as Sharing from "expo-sharing";
 import { MaterialIcons, Feather } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
-import { handlestring } from "@/app/utilsFunctions/functions";
+import handlestring from "@/app/utilsFunctions/functions";
 
 const graduateDegrees = [
   "B.A.",
@@ -235,44 +235,44 @@ export default function EmployeeProfile() {
   };
 
   const createResume = async () => {
-    if(profileComplete >= 50){
-       try {
-      const response = await apiFunction(
-        createResumeApi,
-        null,
-        employee,
-        "post",
-        true
-      );
+    if (profileComplete >= 50) {
+      try {
+        const response = await apiFunction(
+          createResumeApi,
+          null,
+          employee,
+          "post",
+          true
+        );
 
-      if (response) {
+        if (response) {
 
-        const resumeFormatted = renderResume(response.resume);
-        setResumeText(resumeFormatted);
-      } else {
+          const resumeFormatted = renderResume(response.resume);
+          setResumeText(resumeFormatted);
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Resume",
+            text2: "Could not get resume response"
+          })
+        }
+      } catch (err) {
         Toast.show({
           type: "error",
           text1: "Resume",
-          text2: "Could not get resume response"
+          text2: "Something went wrong while fetching resume"
         })
+      } finally {
+        setLoader(false);
       }
-    } catch (err) {
-      Toast.show({
-        type: "error",
-        text1: "Resume",
-        text2: "Something went wrong while fetching resume"
-      })
-    } finally {
-      setLoader(false);
-    }
-    }else{
+    } else {
       Toast.show({
         type: "error",
         text1: "Resume",
         text2: "Profile Should be atleast 50%"
       })
     }
-   
+
   };
 
   const flattenText = (node) => {
@@ -286,40 +286,40 @@ export default function EmployeeProfile() {
   };
 
   const escapeHtml = (s: string) =>
-  String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
 
 
   const exportResumePDF = async (resumeText: any, fileName: string) => {
-  try {
-    // Build HTML body
-    let htmlBody = "";
-    if (Array.isArray(resumeText)) {
-      htmlBody = resumeText
-        .map((item) => {
-          const text = flattenText(item); 
-          const m = text.match(/^\*\*(.+?)\*\*$/);
-          if (m) {
-            return `<div style="font-weight:bold;text-decoration:underline;font-size:18px;margin:12px 0 4px;">${escapeHtml(
-              m[1]
+    try {
+      // Build HTML body
+      let htmlBody = "";
+      if (Array.isArray(resumeText)) {
+        htmlBody = resumeText
+          .map((item) => {
+            const text = flattenText(item);
+            const m = text.match(/^\*\*(.+?)\*\*$/);
+            if (m) {
+              return `<div style="font-weight:bold;text-decoration:underline;font-size:18px;margin:12px 0 4px;">${escapeHtml(
+                m[1]
+              )}</div>`;
+            }
+            return `<div style="font-size:14px;margin:4px 0;">${escapeHtml(
+              text
             )}</div>`;
-          }
-          return `<div style="font-size:14px;margin:4px 0;">${escapeHtml(
-            text
-          )}</div>`;
-        })
-        .join("");
-    } else {
-      htmlBody = `<div style="white-space:pre-wrap;font-size:14px;line-height:1.6;">${escapeHtml(
-        flattenText(resumeText)
-      )}</div>`;
-    }
+          })
+          .join("");
+      } else {
+        htmlBody = `<div style="white-space:pre-wrap;font-size:14px;line-height:1.6;">${escapeHtml(
+          flattenText(resumeText)
+        )}</div>`;
+      }
 
-    const html = `
+      const html = `
       <html>
         <head><meta name="viewport" content="width=device-width, initial-scale=1" /></head>
         <body style="font-family: Arial, sans-serif; padding:30px; color:#000;">
@@ -328,84 +328,84 @@ export default function EmployeeProfile() {
       </html>
     `;
 
-    // 1) Create PDF file
-    const { uri } = await Print.printToFileAsync({ html });
+      // 1) Create PDF file
+      const { uri } = await Print.printToFileAsync({ html });
 
-    // 2) Platform-specific handling
-    if (Platform.OS === "android") {
-      if (FileSystem.StorageAccessFramework) {
-       
-        const perm =
-          await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+      // 2) Platform-specific handling
+      if (Platform.OS === "android") {
+        if (FileSystem.StorageAccessFramework) {
 
-        if (perm.granted) {
-          const base64 = await FileSystem.readAsStringAsync(uri, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-          const targetUri =
-            await FileSystem.StorageAccessFramework.createFileAsync(
-              perm.directoryUri,
-              `${fileName}.pdf`,
-              "application/pdf"
-            );
-          await FileSystem.writeAsStringAsync(targetUri, base64, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-          Toast.show({
-            type: "success",
-            text1: "Pdf",
-            text2: "Pdf saved successfully",
+          const perm =
+            await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+          if (perm.granted) {
+            const base64 = await FileSystem.readAsStringAsync(uri, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+            const targetUri =
+              await FileSystem.StorageAccessFramework.createFileAsync(
+                perm.directoryUri,
+                `${fileName}.pdf`,
+                "application/pdf"
+              );
+            await FileSystem.writeAsStringAsync(targetUri, base64, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+            Toast.show({
+              type: "success",
+              text1: "Pdf",
+              text2: "Pdf saved successfully",
+            });
+            return;
+          }
+        }
+
+        // Fallback → use system share sheet
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(uri, {
+            UTI: ".pdf",
+            mimeType: "application/pdf",
           });
           return;
         }
-      }
 
-      // Fallback → use system share sheet
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(uri, {
-          UTI: ".pdf",
-          mimeType: "application/pdf",
+        Toast.show({
+          type: "info",
+          text1: "Pdf",
+          text2: uri,
         });
-        return;
-      }
-
-      Toast.show({
-        type: "info",
-        text1: "Pdf",
-        text2: uri,
-      });
-    } else {
-      // iOS (no SAF, always share)
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(uri, {
-          UTI: ".pdf",
-          mimeType: "application/pdf",
+      } else {
+        // iOS (no SAF, always share)
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(uri, {
+            UTI: ".pdf",
+            mimeType: "application/pdf",
+          });
+          return;
+        }
+        Toast.show({
+          type: "info",
+          text1: "Pdf",
+          text2: uri,
         });
-        return;
       }
+    } catch (e) {
       Toast.show({
-        type: "info",
+        type: "error",
         text1: "Pdf",
-        text2: uri,
+        text2: "Failed to generate Pdf",
       });
+      console.log("PDF Export Error:", e);
     }
-  } catch (e) {
-    Toast.show({
-      type: "error",
-      text1: "Pdf",
-      text2: "Failed to generate Pdf",
-    });
-    console.log("PDF Export Error:", e);
-  }
-};
+  };
 
   const exportPDF = async () => {
-   
+
     await exportResumePDF(resumeText, "resume");
   };
 
   return (
-    <ScrollView className="flex-1 bg-slate-50">
+    <ScrollView className="flex-1 bg-[#def3f9]">
       {/* Profile */}
       <View className="p-6 bg-white mt-4 mx-4 rounded-xl shadow">
         <View className="flex flex-row justify-start items-center gap-6 mb-2">
@@ -416,34 +416,34 @@ export default function EmployeeProfile() {
             <AnimatedCircularProgress
               size={100}
               width={6}
-              fill={profileComplete} 
-              tintColor={profileComplete <=50 ? "red": (profileComplete <=75 ? "green" : "#0784C9")}
+              fill={profileComplete}
+              tintColor={profileComplete <= 50 ? "red" : (profileComplete <= 75 ? "green" : "#0784C9")}
               backgroundColor="#e0e0e0"
 
-              rotation={0} 
-              childrenContainerStyle ={{
+              rotation={0}
+              childrenContainerStyle={{
                 display: "flex",
                 position: "absolute"
-                
+
               }}
             >
               {
-                (fill)=>(
+                (fill) => (
 
                   <Image
                     source={{ uri: employee?.profileImage }}
                     className="w-full h-full rounded-full border-2 border-blue-100"
                   />
-                  
+
                 )
               }
             </AnimatedCircularProgress>
             <View>
-            <Text className="font-bold">{profileComplete}%</Text>
-          </View>
+              <Text className="font-bold">{profileComplete}%</Text>
+            </View>
           </TouchableOpacity>
 
-          
+
 
           <View className="flex flex-col items-start justify-center">
             <Text className="text-xl font-bold mt-3 text-gray-900">
@@ -455,9 +455,9 @@ export default function EmployeeProfile() {
             <View className="mt-2 items-start flex flex-col">
               <View className="flex-row items-center">
                 <Mail size={14} color="gray" />
-                <TouchableOpacity onPress={()=> showFullSring(!fullString)}>
-                  <Text className="ml-1 text-gray-600">{handlestring(employee?.email, 10, fullString) }</Text>
-                  </TouchableOpacity>
+                <TouchableOpacity onPress={() => showFullSring(!fullString)}>
+                  <Text className="ml-1 text-gray-600">{handlestring(employee?.email, 10, fullString)}</Text>
+                </TouchableOpacity>
               </View>
               <View className="flex-row items-center mt-1">
                 <Phone size={14} color="gray" />
@@ -833,7 +833,7 @@ export default function EmployeeProfile() {
                 ).map((role, index) => (
                   <Text
                     key={index}
-                    className="bg-[#0784C9] text-white px-3 py-1 rounded-full text-xs font-medium"
+                    className="bg-[#0784C9] flex align-center text-white px-3 py-1 rounded-full text-xs font-medium"
                   >
                     {role}
                   </Text>
@@ -896,7 +896,7 @@ export default function EmployeeProfile() {
                     )?.map((role, index) => (
                       <Text
                         key={index}
-                        className="bg-[#1e40af] text-white px-2 py-0.5 rounded-full text-xs font-medium"
+                        className="bg-[#1e40af] flex align text-white px-2 py-0.5 rounded-full text-xs font-medium"
                       >
                         {role}
                       </Text>
@@ -907,12 +907,15 @@ export default function EmployeeProfile() {
                     ? employee.preferredShifts
                     : JSON.parse(employee?.preferredShifts || "[]")
                   ).map((role, index) => (
-                    <Text
-                      key={index}
-                      className="bg-[#0784C9] text-white px-2 py-0.5 rounded-full text-xs font-medium"
-                    >
-                      {role}
-                    </Text>
+                    <View  key={index} className="bg-[#0784C9] px-2 py-0.5 rounded-full items-center justify-center">
+                      <Text className="text-white text-xs font-medium text-center p-1">{role}</Text>
+                    </View>
+                    // <Text
+                    //   key={index}
+                    //   className="bg-[#0784C9] text-white px-2 py-0.5 rounded-full text-xs font-medium text-center"
+                    // >
+                    //   {role}
+                    // </Text>
                   ))}
 
                   {/* Location Types */}
@@ -955,7 +958,7 @@ export default function EmployeeProfile() {
         <View className="flex-row justify-between mb-3">
           <Text className="font-medium text-gray-700">Email Address</Text>
 
-          <TouchableOpacity onPress={()=> showFullSring(!fullString)}><Text className="text-gray-900">{handlestring(employee?.email, 10, fullString) }</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => showFullSring(!fullString)}><Text className="text-gray-900">{handlestring(employee?.email, 10, fullString)}</Text></TouchableOpacity>
         </View>
         <View className="flex-row justify-between mb-3">
           <Text className="font-medium text-gray-700">Phone Number</Text>

@@ -5,10 +5,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { Paperclip } from 'lucide-react-native';
 import ProfileModal from '../modals/viewProfile';
 import Toast from 'react-native-toast-message';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getNumberApi, getProfileApi } from '@/app/api/api';
 import { apiFunction } from '@/app/api/apiFunction';
-import { fetchCredits } from "../../Redux/getData";
 
 
 const DetailRow = ({ logo, label, value }) => (
@@ -24,142 +23,61 @@ const DetailRow = ({ logo, label, value }) => (
 );
 
 const renderChips = (data) => {
-    let items = data;
-    if (typeof items === "string") {
-        try {
-            items = JSON.parse(items);
-        } catch {
-            items = [];
+        let items = data;
+        if (typeof items === "string") {
+            try {
+                items = JSON.parse(items);
+            } catch {
+                items = [];
+            }
         }
-    }
-    if (Array.isArray(items) && items.length > 0) {
-        return (
-            <View className="flex-row flex-wrap gap-2">
-                {items.map((item, index) => (
-                    <Chip
-                        key={index}
-                        mode="outlined"
-                        style={{
-                            backgroundColor: "#E0F2FE", // light blue
-                            color: "gray", // text
-                            fontSize: 10,
-                            paddingHorizontal: 0,
-                            paddingVertical: 0,
-                            fontWeight: "500",
-                            borderRadius: 8,
-                        }}
-                    >
-                        <Text className="text-gray-700 text-xs">{item}</Text>
-                    </Chip>
-                ))}
-            </View>
-        );
-    }
-    return <Text className="text-sm text-gray-650">Not Provided</Text>;
-};
+        if (Array.isArray(items) && items.length > 0) {
+            return (
+                <View className="flex-row flex-wrap gap-2">
+                    {items.map((item, index) => (
+                        <Chip
+                            key={index}
+                            mode="outlined"
+                            style={{
+                                backgroundColor: "#E0F2FE", // light blue
+                                color: "gray", // text
+                                fontSize: 10,
+                                paddingHorizontal: 0,
+                                paddingVertical: 0,
+                                fontWeight: "500",
+                                borderRadius: 8,
+                            }}
+                        >
+                            <Text className="text-gray-700 text-xs">{item}</Text>
+                        </Chip>
+                    ))}
+                </View>
+            );
+        }
+        return <Text className="text-sm text-gray-650">Not Provided</Text>;
+    };
 
 
 
 
 const CandidateCard = ({ candidate }) => {
+
     const [openProfileModal, setOpenProfileModal] = useState(false);
     const [unlocked, setUnlocked] = useState(false);
     const [profile, setProfile] = useState({ number: null });
 
-    const [candidateDetail, setCandidateDetail] = useState(null);
-    const { employer, jobsById } = useSelector((state) => state.getDataReducer);
+  const [candidateDetail, setCandidateDetail] = useState(null);
+  const { employer, jobsById } = useSelector((state) => state.getDataReducer);
 
-    const dispatch = useDispatch()
-
-    useEffect(() => {
-        if (candidate?.EmployeeProfile) {
-            setProfile(candidate?.EmployeeProfile);
-        } else {
-            setProfile(candidate);
-        }
-    }, [candidate]);
+   useEffect(() => {
+    if (candidate?.EmployeeProfile) {
+      setProfile(candidate?.EmployeeProfile);
+    } else {
+      setProfile(candidate);
+    }
+  }, [candidate]);
 
 
-    const handleViewPhone = async () => {
-
-        if (!candidate) return;
-
-        try {
-            if (true) {
-
-                const data = {
-                    employeeId: candidate.user_id,
-                    jobId: null,
-                    company: employer?.company?.companyName,
-                    job: null,
-                };
-
-                const response = await apiFunction(
-                    getNumberApi,
-                    null,
-                    data,
-                    "post",
-                    true
-                );
-
-                if (response === "Plan") {
-                    return
-                }
-                else if (response) {
-                    setProfile((prev) => ({ ...prev, number: response?.data?.phone }));
-                    dispatch(fetchCredits());
-                } else {
-                    Toast.show({
-                        type: "error",
-                        text1: "Credits",
-                        text2: "You Don't have enogh credits"
-                    })
-                }
-            } else {
-                const number = profile?.User?.phone || "";
-                setProfile((prev) => ({ ...prev, number }));
-            }
-        } catch (error) {
-            Toast.show({
-                type: "error",
-                text1: "Contact",
-                text2: "Error Fetching phone number"
-            })
-
-        }
-    };
-
-
-    const getProfile = async () => {
-        if (profile) {
-            if (unlocked) {
-                setCandidateDetail(candidate);
-            } else {
-                const data = {
-                    employeeId: profile?.user_id,
-                    jobId: null,
-                    company: employer?.company?.companyName,
-                    job: null,
-                };
-
-                const response = await apiFunction(getProfileApi, null, data, "post", true);
-
-
-                if (response === "plan") {
-                    return
-                } else if (response) {
-                    setCandidateDetail(response.data);
-                } else {
-                    return Toast.show({
-                        type: "error",
-                        text1: "Profile",
-                        text2: "Could not get Profile"
-                    })
-                }
-            }
-            setOpenProfileModal(true);
-        }
-    };
 
     return (
         <>
@@ -204,7 +122,7 @@ const CandidateCard = ({ candidate }) => {
                                         {candidate?.currentLocation ? `${candidate?.currentLocation}` : "N/A"}
                                     </Text>
                                 </View>
-                                <TouchableOpacity onPress={getProfile} className="mt-2 self-start">
+                                <TouchableOpacity onPress={()=>setOpenProfileModal(true)} className="mt-2 self-start">
                                     <Text className="font-bold text-sm text-green-500">
                                         View Profile
                                     </Text>
@@ -259,7 +177,7 @@ const CandidateCard = ({ candidate }) => {
                                 value={renderChips(candidate?.preferredJobCity)}
                             />
                             <DetailRow
-                                logo="cog-outline"
+                                logo="cog-outline" 
                                 label="Skills"
                                 value={renderChips(candidate?.skills)}
                             />
@@ -301,17 +219,16 @@ const CandidateCard = ({ candidate }) => {
                                 <View className="flex">
                                     <TouchableOpacity
 
-                                        className={`rounded-md py-2 px-4 mr-2 ${profile?.number
+                                        className={`rounded-md py-2 px-4 mr-2 ${candidate?.User?.phone
                                             ? 'bg-white border border-blue-500'
                                             : 'bg-blue-500'
                                             }`}
-                                        onPress={handleViewPhone}
                                     >
                                         <Text
-                                            className={`font-medium text-center ${profile?.number ? 'text-blue-500' : 'text-blue'
+                                            className={`font-medium text-center ${candidate?.User?.phone ? 'text-blue-500' : 'text-blue'
                                                 }`}
                                         >
-                                            {profile?.number ? profile?.number : 'View Phone Number'}
+                                            {candidate?.User?.phone ? candidate?.User?.phone : 'View Phone Number'} 
                                         </Text>
                                     </TouchableOpacity>
                                 </View>

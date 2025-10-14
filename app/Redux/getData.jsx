@@ -1,13 +1,22 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { apiFunction } from '../api/apiFunction';
-import { createEmpProfile, employeeExpApi, getJobsApi,getCredits, getCreditsApi, createProfileApi, jobPostApi, getUnlockedApi, searchCandidateApi, appliedJobsApi } from '../api/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { apiFunction } from "../api/apiFunction";
+import {
+  createEmpProfile,
+  employeeExpApi,
+  getJobsApi,
+  getCredits,
+  getCreditsApi,
+  createProfileApi,
+  jobPostApi,
+  getUnlockedApi,
+  searchCandidateApi,
+  appliedJobsApi,
+} from "../api/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
-
- const updateTotalExp = async (employee) => {
+const updateTotalExp = async (employee) => {
   if (!employee?.updatedAt || !employee?.TotalExperience) {
-    
     return;
   }
 
@@ -21,156 +30,145 @@ import Toast from 'react-native-toast-message';
   let years = employee.TotalExperience.years || 0;
   let months = employee.TotalExperience.months || 0;
 
-  if(gapInDays > 30){
+  if (gapInDays > 30) {
     months += 1;
-  if (months >= 12) {
-    years += 1;
-    months = 0;
-  }
+    if (months >= 12) {
+      years += 1;
+      months = 0;
+    }
   }
 
   const data = { years, months };
 
-
-  const headers = {Authorization: `Bearer ${AsyncStorage.getItem("Token")}`}
+  const headers = { Authorization: `Bearer ${AsyncStorage.getItem("Token")}` };
 
   try {
-     await apiFunction(employeeExpApi, null, data, "post", {headers} );
-    
+    await apiFunction(employeeExpApi, null, data, "post", { headers });
   } catch (error) {
-    console.error(error);
     Toast.show({
-        type: "error",
-        text1: "Experience",
-        text2: "could not update Experience"
-      })
+      type: "error",
+      text1: "Experience",
+      text2: "could not update Experience",
+    });
   }
 };
 
-
-export const fetchUserProfile = createAsyncThunk('getData/fetchUserProfile', async () => {
-
-const response = await apiFunction(createEmpProfile, null, null, "get", true);
-  if(response){
-      
-    updateTotalExp(response.data);
-    return response.data;
-  }
-  console.log(response)
-});
-
-export const fetchEmployerProfile = createAsyncThunk('getData/fetchEmployerProfile', async () => {
-
-const response = await apiFunction(createProfileApi, null, null, "get", true);
-  if(response){
-     
-    return response.data;
-  }
-  
-});
-
-
-
-export const fetchJobs = createAsyncThunk('getData/fetchJobs', async () => {
-  
-  const response = await apiFunction(getJobsApi, null, null, "get", true);
-  if(response){
-    
-    
-   
+export const fetchUserProfile = createAsyncThunk(
+  "getData/fetchUserProfile",
+  async () => {
+    const response = await apiFunction(
+      createEmpProfile,
+      null,
+      null,
+      "get",
+      true
+    );
+    if (response) {
+      updateTotalExp(response.data);
       return response.data;
+    }
   }
+);
 
+export const fetchEmployerProfile = createAsyncThunk(
+  "getData/fetchEmployerProfile",
+  async () => {
+    const response = await apiFunction(
+      createProfileApi,
+      null,
+      null,
+      "get",
+      true
+    );
+    if (response) {
+      return response.data;
+    }
+  }
+);
+
+export const fetchJobs = createAsyncThunk("getData/fetchJobs", async () => {
+  const response = await apiFunction(getJobsApi, null, null, "get", true);
+  if (response) {
+    return response.data;
+  }
 });
 
 export const fetchJobsById = createAsyncThunk(
   "getData/fetchJobsById",
   async (id, { rejectWithValue }) => {
     try {
-      
       const response = await apiFunction(jobPostApi, [id], null, "get", true);
-      if(response){
- 
+      if (response) {
         return response.data;
       }
     } catch (error) {
-      console.log("error", error)
       return rejectWithValue({ error: error.message });
     }
   }
 );
 
-export const fetchAppliedJobs = createAsyncThunk("getData/fetchAppliedJobs", async()=>{
-  try{
-      const response = await apiFunction(appliedJobsApi, null, null, "get", true);
-      if(response){
-        
-        
-        
-        return response.data
+export const fetchAppliedJobs = createAsyncThunk(
+  "getData/fetchAppliedJobs",
+  async () => {
+    try {
+      const response = await apiFunction(
+        appliedJobsApi,
+        null,
+        null,
+        "get",
+        true
+      );
+      if (response) {
+        return response.data;
       }
-  }catch(e){
-    console.log(e)
+    } catch (e) {
+    }
   }
-})
+);
 
 export const fetchCredits = createAsyncThunk(
   "getData/fetchCredits",
   async () => {
-    const response = await apiFunction(getCreditsApi,null,null,"get",true);
+    const response = await apiFunction(getCreditsApi, null, null, "get", true);
 
-    
-    
     if (response) {
-      
       if (response.data.length <= 0) {
-        
         Toast.show({
-        type: "error",
-        text1: "Credits",
-        text2: "No credits"
-      })
+          type: "error",
+          text1: "Credits",
+          text2: "No credits",
+        });
       } else {
-      
         return response;
       }
     }
   }
 );
 
-
-
-
-
 const initialState = {
   employee: null,
-  employer:null,
+  employer: null,
   jobs: null,
   loading: false,
   error: null,
   jobCredit: null,
-  appliedJobs:null,
+  appliedJobs: null,
   dataBaseCredit: null,
   creditsData: null,
   jobData: null,
   jobsById: null,
-  
 };
 
-
-
-
 const getDataSlice = createSlice({
-  name: 'getData',
+  name: "getData",
   initialState,
   reducers: {
-    deleteEmployee: (state) =>{
+    deleteEmployee: (state) => {
       state.employee = null;
     },
     setJobData: (state, action) => {
-  
       state.jobData = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -186,8 +184,8 @@ const getDataSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-      .addCase(fetchAppliedJobs.pending, (state, action)=>{
-         state.loading = true;
+      .addCase(fetchAppliedJobs.pending, (state, action) => {
+        state.loading = true;
         state.error = null;
       })
       .addCase(fetchAppliedJobs.fulfilled, (state, action) => {
@@ -251,10 +249,8 @@ const getDataSlice = createSlice({
       .addCase(fetchJobsById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
-        state.jobsById = null
-      })
-     
-      
+        state.jobsById = null;
+      });
   },
 });
 

@@ -1,13 +1,15 @@
 // UnigrowOnboardingForm.js
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { Checkbox } from "react-native-paper";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useController } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
+import { apiFunction } from "../api/apiFunction";
+import { createProfileApi, logOutApi } from "../api/api";
 
 const companySizes = [
   "0-50",
@@ -27,7 +29,6 @@ export default function UnigrowOnboardingForm() {
     control,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -38,7 +39,11 @@ export default function UnigrowOnboardingForm() {
     },
   });
 
-  const employeeNumber = watch("employeeNumber");
+ const { field: { value: employeeNumber }, } = useController({
+  name: "employeeNumber",
+  control,
+  rules: { required: "Please select company size" },
+});
 
   const onSubmit = async (data) => {
     if (!agreement) {
@@ -49,14 +54,44 @@ export default function UnigrowOnboardingForm() {
       })
       return;
     }
-     router.push("/employer/tab/(tabs)/Jobs");
-    
+
+     if(data){
+      try {
+        const response = await apiFunction(createProfileApi,null,data,"post",true)
+        
+        if(response?.status === 409) return Toast.show({
+          type: "error",
+          text1: "Employer already exist.",
+          text2: "Please try Login again after logout."
+        }) 
+        if(response?.status === 400) return Toast.show({
+        type: "error",
+        text1: "Duplicate Company",
+        text2: "Please try with different company name."
+      })
+
+        if(response) return  router.push("/employer/tab/(tabs)/Jobs");
+      } catch (error) {
+        console.log("err",error); 
+      }
+      
+    }
+
   };
 
-  const logout = async()=>{
-    await AsyncStorage.removeItem("User");
-    await AsyncStorage.removeItem("Token");
-    router.replace("/landingpage")
+  const logout = async () => {
+    const response = await apiFunction(logOutApi, null, {}, "post", true);
+        if (response) {
+            await AsyncStorage.removeItem("Token");
+            await AsyncStorage.removeItem("User");
+            router.replace("/landingpage");
+        } else {
+            Toast.show({
+                type: "error",
+                text1: "Logout",
+                text2: "could not Logout! Try again"
+            })
+        }
   }
 
   return (
@@ -66,7 +101,7 @@ export default function UnigrowOnboardingForm() {
     >
       {/* Header */}
       <View className="flex flex-row justify-between items-center mb-8">
-       
+
         <TouchableOpacity
           className="bg-[#003B70] px-4 py-2 rounded-full"
           onPress={logout}
@@ -129,25 +164,25 @@ export default function UnigrowOnboardingForm() {
         />
 
         <Controller
-  control={control}
-  name="isConsultancy"
-  
-  render={({ field: { onChange, value }, fieldState: { error } }) => (
-    <View className="mb-5">
-      <View className="flex flex-row items-center">
-        <Checkbox
-          status={value ? "checked" : "unchecked"}
-          color="#0784C9"
-          onPress={() => onChange(!value)}
+          control={control}
+          name="isConsultancy"
+
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+            <View className="mb-5">
+              <View className="flex flex-row items-center">
+                <Checkbox
+                  status={value ? "checked" : "unchecked"}
+                  color="#0784C9"
+                  onPress={() => onChange(!value)}
+                />
+                <Text className="text-sm text-[#003B70]">
+                  This is a Consultancy.
+                </Text>
+              </View>
+
+            </View>
+          )}
         />
-        <Text className="text-sm text-[#003B70]">
-          This is a consultancy
-        </Text>
-      </View>
-      
-    </View>
-  )}
-/>
 
 
         {/* Employee Number */}
@@ -158,17 +193,15 @@ export default function UnigrowOnboardingForm() {
           {companySizes.map((option, index) => (
             <TouchableOpacity
               key={index}
-              className={`px-4 py-2 rounded-full border ${
-                employeeNumber === option
+              className={`px-4 py-2 rounded-full border ${employeeNumber === option
                   ? "bg-[#0784C9] border-[#0784C9]"
                   : "bg-gray-100 border-gray-300"
-              }`}
-              onPress={() => setValue("employeeNumber", option, { shouldValidate: true })}
+                }`}
+              onPress={() => setValue("employeeNumber", option, { shouldValidate: true, shouldDirty: true })}
             >
               <Text
-                className={`text-sm font-medium ${
-                  employeeNumber === option ? "text-white" : "text-[#003B70]"
-                }`}
+                className={`text-sm font-medium ${employeeNumber === option ? "text-white" : "text-[#003B70]"
+                  }`}
               >
                 {option}
               </Text>
@@ -207,9 +240,8 @@ export default function UnigrowOnboardingForm() {
         {/* Submit Button */}
         <TouchableOpacity
           disabled={!agreement}
-          className={`py-3 rounded-lg ${
-            agreement ? "bg-[#0784C9]" : "bg-gray-400"
-          }`}
+          className={`py-3 rounded-lg ${agreement ? "bg-[#0784C9]" : "bg-gray-400"
+            }`}
           onPress={handleSubmit(onSubmit)}
         >
           <Text className="text-center text-white font-semibold text-lg" >

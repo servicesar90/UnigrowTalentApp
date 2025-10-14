@@ -88,7 +88,6 @@ export default function IntroScreen() {
 
   return (
     <>
-
       <AppIntroSlider
         data={slides}
         renderItem={renderItem}

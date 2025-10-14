@@ -62,7 +62,7 @@ const BillingPage = () => {
       <div style="max-width: 800px; margin: auto; background-color: white; color: black; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #ccc;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid #ccc; padding-bottom: 16px;">
           <div>
-            <img src="/unigrowLogo.png" alt="Company Logo" style="height: 48px; margin-bottom: 8px;">
+            <img src="https://unigrowtalent.com/assets/unigrowLogo.svg" alt="Company Logo" style="height: 48px; margin-bottom: 8px;">
             <div style="font-size: 12px; color: #666;">www.unigrowtalent.com</div>
           </div>
           <div style="text-align: right;">
@@ -82,9 +82,9 @@ const BillingPage = () => {
           <tbody>
             <tr>
               <td style="border: 1px solid black; padding: 8px; vertical-align: top;">
-                <p>${invoiceData?.Employer?.GstDetail?.tradeNam}</p>
-                <p>${invoiceData?.Employer?.GstDetail?.bno}, ${invoiceData?.Employer?.GstDetail?.bnm}, ${invoiceData?.Employer?.GstDetail?.dst}</p>
-                <p>GSTIN: ${invoiceData?.Employer?.GstDetail?.gstin}</p>
+                <p>${invoiceData?.Employer?.GstDetail?.tradeNam || "TradeName Not Provided."}</p>
+                <p>${invoiceData?.Employer?.GstDetail?.bno || ""}, ${invoiceData?.Employer?.GstDetail?.bnm || ""}, ${invoiceData?.Employer?.GstDetail?.dst || "Details Not Provided."}</p>
+                <p>GSTIN: ${invoiceData?.Employer?.GstDetail?.gstin || "Not Provided"}</p>
               </td>
               <td style="border: 1px black; padding: 8px; vertical-align: top;">
                 <p>TalentNest People Services PVT. Ltd.</p>

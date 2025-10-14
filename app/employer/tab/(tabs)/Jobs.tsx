@@ -1,7 +1,7 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import { jobPostApi } from '../../../api/api';
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { apiFunction } from "../../../api/apiFunction";
 import JobCard from '../../Cards/JobCard'
 
@@ -20,8 +20,6 @@ export default function JobsPage() {
         if (res && res.data) {
           setJobs(res.data);
 
-        } else {
-          console.log('error fetching jobs');
         }
       } catch (error) {
         console.error('An error occurred:', error);

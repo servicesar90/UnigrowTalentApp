@@ -3,7 +3,7 @@ import { View, Text, Pressable, ScrollView, ActivityIndicator, TouchableOpacity 
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Picker } from "@react-native-picker/picker";
-import CandidateCard from "../Cards/candidateCard";
+import UnlockedCadidateCard from "../Cards/unlockedCard";
 import { fetchUnlockedCandidate } from "@/app/Redux/getData";
 import { apiFunction } from "@/app/api/apiFunction";
 import { getUnlockedApi } from "@/app/api/api";
@@ -520,7 +520,7 @@ export function UnlockedCandidatesPage() {
                   </Text>
 
                   {candidatess?.map((candidate, index) => (
-                    <CandidateCard key={index} candidate={candidate.EmployeeProfile} />
+                    <UnlockedCadidateCard key={index} candidate={candidate.EmployeeProfile} />
                   ))}
                 </>
               ) : (

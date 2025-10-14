@@ -64,7 +64,7 @@ export default function AppliedJobs() {
   ];
 
   return (
-    <View className="flex-1 bg-slate-50 p-4">
+    <View className="flex-1 bg-[#def3f9] p-4">
       {/* Header */}
       <View className="mb-4">
         <Text className="text-2xl font-bold text-gray-900">Applied Jobs</Text>

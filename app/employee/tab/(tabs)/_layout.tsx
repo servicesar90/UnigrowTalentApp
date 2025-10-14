@@ -3,6 +3,7 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { View, Text } from "react-native";
 import Header from "../../header";
+import { Background } from "@react-navigation/elements";
 
 const TabIcon = ({ focused, icon }) => {
   return (
@@ -39,13 +40,12 @@ export default function Layout() {
           backgroundColor: "#0784C9",
           borderRadius: 50,
           width: "90%",
-          marginBottom: 30,
+          marginBottom: 50,
           marginLeft: 20,
           position: "absolute",
         },
         sceneStyle:{
-          marginBottom:0,
-          paddingBottom:80
+          paddingBottom:80,
         },
         tabBarIconStyle: {
           width: "20vw",

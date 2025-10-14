@@ -130,6 +130,8 @@ export default function Header() {
                 </View>
             </View>
 
+
+                        {/* profile Model Begin */}
             {openModel &&
                 <View>
                     <Menu
@@ -223,6 +225,8 @@ export default function Header() {
                 </View>
 
             }
+
+                {/* profile model end */}
 
 
 

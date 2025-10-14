@@ -32,24 +32,23 @@ export default function Header() {
   };
 
   // const themeChanged = ()=>{
- 
+
   //   setDarktheme(!darkTheme);
   //     Toast.show({
   //     type:"success",
   //     text1: "Theme",
   //     text2: "Theme Changed Succesfully",
-      
+
   //   })
 
-    
+
   // }
 
 
- 
+
 
   return (
-   
-      <View className="bg-white border-b border-gray-200 shadow-sm h-20 justify-center mt-10 ">
+    <View className="bg-white border-b border-gray-200 shadow-sm h-20 justify-center mt-10 ">
       <View className="px-4 flex-row justify-between items-center h-16">
         {/* Left side - Logo */}
         <View className="flex-row items-center">
@@ -98,7 +97,5 @@ export default function Header() {
         />
       )}
     </View>
-   
-    
   );
 }

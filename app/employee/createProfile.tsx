@@ -8,6 +8,7 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import { apiFunction } from "../api/apiFunction";
 import { createEmpProfile } from "../api/api";
 import { useRouter } from "expo-router";
+import Toast from "react-native-toast-message";
 
 export default function CreateProfileScreen() {
     const [steps, setSteps] = useState(0);
@@ -77,7 +78,7 @@ export default function CreateProfileScreen() {
             setSelected(selected.filter((x) => x !== item));
             setValue(name, selected.filter((x) => x !== item))
         } else {
-    
+
             setSelected([...selected, item]);
             setValue(name, [...selected, item]);
         }
@@ -113,20 +114,28 @@ export default function CreateProfileScreen() {
 
 
 
-    const onSubmit = async(data: any) => {
-        
+    const onSubmit = async (data: any) => {
+
         const response = await apiFunction(createEmpProfile, null, data, "post", true);
-        console.log(response)
-        if(response){
-           
+        
+        if (response?.status === 409) return Toast.show({
+            type: "error",
+            text1: "Employer already exist.",
+            text2: "Please try Login again after logout."
+        })
+        if (response?.status === 400) return Toast.show({
+            type: "error",
+            text1: "Duplicate Company",
+            text2: "Please try with different company name."
+        })
+        if (response) {
             router.push("/employee/tab/(tabs)/home/home")
         }
     };
 
     return (
-        <View className="flex-1 bg-gray-100">
-           
-          
+        <View className="flex-1 bg-[#def3f9]">
+
             {/* Step 1 */}
             {steps === 0 && (
                 <ScrollView contentContainerClassName="p-4 gap-4">
@@ -188,10 +197,7 @@ export default function CreateProfileScreen() {
                                                     onChange(selectedDate?.toISOString().split("T")[0])
 
                                                 }
-
                                                 setShow(false);
-                                                console.log(value)
-
                                             }}
                                         />}
 
@@ -278,13 +284,13 @@ export default function CreateProfileScreen() {
                         )}
                     />
 
-                 
-                        <TouchableOpacity className="bg-[#0784c9] flex items-center justify-center rounded-[50] py-2"
-                            
-                            onPress={handleSubmit(firstStepValidation)}
-                            
-                        ><Text className="text-white font-bold text-lg">Next</Text></TouchableOpacity>
-                
+
+                    <TouchableOpacity className="bg-[#0784c9] flex items-center justify-center rounded-[50] py-2"
+
+                        onPress={handleSubmit(firstStepValidation)}
+
+                    ><Text className="text-white font-bold text-lg">Next</Text></TouchableOpacity>
+
 
                 </ScrollView>
             )}
@@ -330,7 +336,7 @@ export default function CreateProfileScreen() {
                         <Controller
                             control={control}
                             name="months"
-                           
+
                             render={({ field: { onChange, value } }) => (
 
                                 <View className="bg-white w-40">
@@ -380,7 +386,7 @@ export default function CreateProfileScreen() {
                                 )}
                             />
 
-                             <View className="mb-3">
+                            <View className="mb-3">
                                 <Text className="text-sm font-medium mb-1">Job Role</Text>
                                 <Controller
                                     control={control}

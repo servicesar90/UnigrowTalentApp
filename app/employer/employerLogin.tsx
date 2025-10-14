@@ -125,12 +125,9 @@ export default function EmployeeLogin() {
     setPhoneNumber(value);
     if (value.length === 10) {
       const response = await apiFunction(mobileApi, null, { phone: value, role: "employer" }, "post", false)
-      console.log(response);
       
       if (response) {
-
         setShowMobile(false);
-
       }
 
     }

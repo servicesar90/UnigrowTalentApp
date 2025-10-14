@@ -39,7 +39,7 @@ export default function Layout() {
           backgroundColor: "#0784C9",
           borderRadius: 50,
           width: "90%",
-          marginBottom: 30,
+          marginBottom: 50,
           marginLeft: 20,
           position: "absolute",
         },

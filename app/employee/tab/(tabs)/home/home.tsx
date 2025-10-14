@@ -160,15 +160,15 @@ export default function Home() {
     }
   };
 
-  const salaryfilter = async(value) => {
+  const salaryfilter = async (value) => {
     setSalaryValue(value)
     const url = new URL(jobAllFilterApi);
     url.searchParams.append("salaryMax", value)
 
-   
+
     const response = await apiFunction(url.toString(), null, null, "get", true);
     if (response) {
-    
+
       setJobs(response.data);
     }
 
@@ -179,7 +179,7 @@ export default function Home() {
   return (
     <View className="w-full h-full ">
 
-      <ScrollView className="flex-1 bg-gray-50 p-4">
+      <ScrollView className="flex-1 p-4">
         {/* Search Bar */}
 
         <View className="w-full flex flex-row justify-end items-center gap-4 pr-4 mb-2">
@@ -204,57 +204,59 @@ export default function Home() {
               <FilterX size={16} color="#0784c9" className="ml-1" />
             </TouchableOpacity>
           }
-
-
         </View>
 
 
+        {/* Search start */}
+        {
+          showsearch && <View>
 
-        {showsearch && <View>
+            <View className="flex-row items-center bg-white rounded-lg border border-gray-300 px-3 py-2 mb-6">
+              <Search size={20} color="#6B7280" />
+              <Controller
+                name="q"
+                control={control}
+                render={({ field }) => (
 
-          <View className="flex-row items-center bg-white rounded-lg border border-gray-300 px-3 py-2 mb-6">
-            <Search size={20} color="#6B7280" />
-            <Controller
-              name="q"
-              control={control}
-              render={({ field }) => (
+                  <TextInput
+                    onChange={({ nativeEvent: { text } }) => field.onChange(text)}
+                    value={field.value}
+                    placeholder="Search for any keywords..."
+                    className="flex-1 ml-2 text-base"
+                  />
+                )}
 
-                <TextInput
-                  onChange={({ nativeEvent: { text } }) => field.onChange(text)}
-                  value={field.value}
-                  placeholder="Search for any keywords..."
-                  className="flex-1 ml-2 text-base"
-                />
-              )}
-
-            />
+              />
 
 
+            </View>
+
+            <View className="flex-row items-center bg-white rounded-lg border border-gray-300 px-3 py-2 mb-6">
+              <Search size={20} color="#6B7280" />
+              <Controller
+                name="l"
+                control={control}
+                render={({ field }) => (
+
+                  <TextInput
+                    onChange={({ nativeEvent: { text } }) => field.onChange(text)}
+                    value={field.value}
+                    placeholder="Search for location..."
+                    className="flex-1 ml-2 text-base"
+                  />
+                )}
+
+              />
+              <TouchableOpacity onPress={handleSubmit(searchJob)} className="bg-[#0784c9] px-4 py-2 rounded-lg">
+                <Text className="text-white font-medium">Search</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+        }
+        {/* Search end */}
 
-          <View className="flex-row items-center bg-white rounded-lg border border-gray-300 px-3 py-2 mb-6">
-            <Search size={20} color="#6B7280" />
-            <Controller
-              name="l"
-              control={control}
-              render={({ field }) => (
 
-                <TextInput
-                  onChange={({ nativeEvent: { text } }) => field.onChange(text)}
-                  value={field.value}
-                  placeholder="Search for location..."
-                  className="flex-1 ml-2 text-base"
-                />
-              )}
-
-            />
-            <TouchableOpacity onPress={handleSubmit(searchJob)} className="bg-[#0784c9] px-4 py-2 rounded-lg">
-              <Text className="text-white font-medium">Search</Text>
-            </TouchableOpacity>
-          </View>
-        </View>}
-
-        {/* Filter Buttons */}
+        {/* Filter Buttons  */}
         {showFilter &&
           <View className="flex-row flex-wrap justify-center gap-3 mb-6">
             {filterOptions.map((filter) => (
@@ -277,23 +279,24 @@ export default function Home() {
 
             <View className="flex justify-center items-center ">
 
-            <Text className="font-bold text-sm ">Salary Range</Text>
+              <Text className="font-bold text-sm ">Salary Range</Text>
 
-            <Slider
-              style={{ width: 200, height: 40 , marginTop: -10}}
-              minimumValue={5000}
-              maximumValue={100000}
-              minimumTrackTintColor="#0784c9"
-              maximumTrackTintColor="#5babd6ff"
-              value={salaryValue}
-              onValueChange={(value) =>salaryfilter(value)}
-            />
+              <Slider
+                style={{ width: 200, height: 40, marginTop: -10 }}
+                minimumValue={5000}
+                maximumValue={100000}
+                minimumTrackTintColor="#0784c9"
+                maximumTrackTintColor="#5babd6ff"
+                value={salaryValue}
+                onValueChange={(value) => salaryfilter(value)}
+              />
 
-            <Text className="-mt-3">{salaryValue}</Text>
+              <Text className="-mt-3">{salaryValue}</Text>
 
             </View>
 
-          </View>}
+          </View>
+        }
 
         <FlatList
           ref={flatListRef}
@@ -407,23 +410,23 @@ export default function Home() {
                   {item?.workLocationType && (
                     <Text
                       className="py-2 px-3 rounded-full text-xs font-medium border bg-[#dff3f9] text-[#003B70] border-[#0784C9]"
-                      
+
                     >
                       {item?.workLocationType}
                     </Text>
                   )}
                   {item?.jobType && (
                     <Text
-                     className="py-2 px-3 rounded-full text-xs font-medium border bg-[#dff3f9] text-[#003B70] border-[#0784C9]"
-                      
+                      className="py-2 px-3 rounded-full text-xs font-medium border bg-[#dff3f9] text-[#003B70] border-[#0784C9]"
+
                     >
                       {item.jobType}
                     </Text>
                   )}
                   {item?.payType && (
                     <Text
-                       className="py-2 px-3 rounded-full text-xs font-medium border bg-[#dff3f9] text-[#003B70] border-[#0784C9]"
-                      
+                      className="py-2 px-3 rounded-full text-xs font-medium border bg-[#dff3f9] text-[#003B70] border-[#0784C9]"
+
                     >
                       {item.payType}
                     </Text>
@@ -461,7 +464,7 @@ export default function Home() {
         </View>
 
         {/* Job Cards */}
-        <View className="gap-4">
+        <View className="gap-4 mb-20">
           {jobss?.map((job, index) => (
             <TouchableOpacity
               className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-md active:scale-[0.99]"
@@ -567,8 +570,8 @@ export default function Home() {
                 <View className="flex-row flex-wrap flex justify-start items-center mb-3 gap-2">
                   {job?.workLocationType && (
                     <Text
-                       className="py-2 px-3 rounded-full text-xs font-medium border bg-[#dff3f9] text-[#003B70] border-[#0784C9]"
-                      
+                      className="py-2 px-3 rounded-full text-xs font-medium border bg-[#dff3f9] text-[#003B70] border-[#0784C9]"
+
                     >
                       {job.workLocationType}
                     </Text>
@@ -576,15 +579,15 @@ export default function Home() {
                   {job?.jobType && (
                     <Text
                       className="py-2 px-3 rounded-full text-xs font-medium border bg-[#dff3f9] text-[#003B70] border-[#0784C9]"
-                      
+
                     >
                       {job.jobType}
                     </Text>
                   )}
                   {job?.payType && (
                     <Text
-                       className="py-2 px-3 rounded-full text-xs font-medium border bg-[#dff3f9] text-[#003B70] border-[#0784C9]"
-                      
+                      className="py-2 px-3 rounded-full text-xs font-medium border bg-[#dff3f9] text-[#003B70] border-[#0784C9]"
+
                     >
                       {job.payType}
                     </Text>
@@ -613,12 +616,14 @@ export default function Home() {
         </View>
 
         {/* Load More */}
-        <View className="items-center mt-6 mb-12">
+        {/* <View className="items-center mt-6 mb-12">
           <TouchableOpacity className="border border-blue-600 px-6 py-3 rounded-lg">
             <Text className="text-blue-600 font-medium">Load More Jobs</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </ScrollView>
+
+      {/* filters modal start */}
       <Modal
         visible={showFilterModal.length > 0}
         onDismiss={() => setShowFilterModal([])}
@@ -645,6 +650,9 @@ export default function Home() {
         </View>
 
       </Modal>
+      {/* filters modal end */}
+
+
     </View>
   );
 }

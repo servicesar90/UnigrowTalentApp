@@ -53,23 +53,20 @@ export const apiFunction = async (api, params, data, type, header) => {
     }
 
     if (response) {
-
-  
-
       return response.data ? response.data : response;
     }
   } catch (err) {
-    console.log(err)
     if (err.status === 403) {
       Toast.show({
         type: "error",
         text1: "Credits",
-        text2: "You Don't have enogh credits"
+        text2: "You Don't have Enough Credits"
       })
 
       return "plan"
     }
-
+    return err
+    
   }
 
 }
@@ -81,7 +78,6 @@ export const getFreeCredit = async (data) => {
     };
 
     const response = await axios.post(getFreeCreditsApi, data, { headers });
-
     return response;
   } catch (err) {
  

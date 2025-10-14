@@ -129,7 +129,6 @@ const ProfileModal = ({
   }, [candidate]);
 
   if (!open) return null;
-  console.log("candidate", JSON.stringify(candidate));
 
   return (
     <Modal

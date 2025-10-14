@@ -1,4 +1,4 @@
-export const handlestring =(string, length, showFull)=>{
+const handlestring =(string, length, showFull)=>{
     let cutString = string;
     if(string.length >length){
          cutString = `${string.slice(0,length)}...`;
@@ -10,4 +10,6 @@ export const handlestring =(string, length, showFull)=>{
         return cutString;
     }
 }
+
+export default handlestring;
 
