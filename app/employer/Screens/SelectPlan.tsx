@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView,  Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { getBill, getPlans } from "../../api/apiFunction";
 // import { showErrorToast } from "../ui/toast";
 // import { Dialog } from "@rneui/themed";
@@ -10,10 +10,10 @@ import {
 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import { X } from "lucide-react-native";
 import { Modal } from "react-native-paper";
+import Toast from "react-native-toast-message";
 
-// Helper component for Plan Card
+
 // Helper component for Plan Card
 const PlanCard = ({ plan, freeUsed, handleSelect, icons }) => {
   const isBasicAndUsed = plan?.name === "Basic" && freeUsed;
@@ -51,7 +51,7 @@ const PlanCard = ({ plan, freeUsed, handleSelect, icons }) => {
       }}
     >
 
-      <View className="text-center mb-5">
+      <View className="flex items-center justify-center text-center mb-5">
         <Text className="text-2xl font-bold text-gray-800 mb-2">
           {plan.name}
         </Text>
@@ -68,7 +68,7 @@ const PlanCard = ({ plan, freeUsed, handleSelect, icons }) => {
         </Text>
       </View>
 
-      <View className="grid grid-cols-2 gap-3 mb-6">
+      {/* <View className="grid grid-rows-2 gap-3 mb-6">
         <View className="bg-blue-100/70 p-3 rounded-xl border border-blue-200 text-center">
           <View className="flex items-center justify-center mb-1">
             <FontAwesome name="briefcase" size={20} color="#0784C9" />
@@ -91,7 +91,36 @@ const PlanCard = ({ plan, freeUsed, handleSelect, icons }) => {
             Database
           </Text>
         </View>
+      </View> */}
+
+      <View className="flex flex-row gap-3 mb-6 justify-between">
+        {/* Job Credits Box */}
+        <View className="flex-1 bg-blue-100/70 p-3 rounded-xl border border-blue-200 items-center">
+          <View className="flex items-center justify-center mb-1">
+            <FontAwesome name="briefcase" size={20} color="#0784C9" />
+          </View>
+          <Text className="text-lg font-bold text-[#0784C9] text-center">
+            {plan.job_credits}
+          </Text>
+          <Text className="text-[10px] text-gray-600 font-medium text-center">
+            Job Credits
+          </Text>
+        </View>
+
+        {/* Database Box */}
+        <View className="flex-1 bg-green-100/70 p-3 rounded-xl border border-green-200 items-center">
+          <View className="flex items-center justify-center mb-1">
+            <MaterialCommunityIcons name="database" size={20} color="#16a34a" />
+          </View>
+          <Text className="text-lg font-bold text-[#16a34a] text-center">
+            {plan.Database_credits}
+          </Text>
+          <Text className="text-[10px] text-gray-600 font-medium text-center">
+            Database
+          </Text>
+        </View>
       </View>
+
 
       <View className="mb-12">
         {(Array.isArray(plan?.features) ? plan.features : JSON.parse(plan.features)).map((item, index) => (
@@ -130,7 +159,11 @@ export default function SelectPlan() {
       if (response) {
         setAllPlans(response.data.data);
       } else {
-        showErrorToast("Could not fetch Plans");
+        Toast.show({
+                type: "error",
+                text1: "Could not fetch plans",
+                text2: "Please try after some time"
+              });
       }
     };
 
@@ -183,7 +216,7 @@ export default function SelectPlan() {
     const total = +(basePlan + CGST + SGST).toFixed(2);
 
     const selectedPlan = { ...plan, price: total };
-    console.log("seleceted",selectedPlan)
+    console.log("seleceted", selectedPlan)
     await AsyncStorage.setItem("selectedPlan", JSON.stringify(selectedPlan));
 
     setChoosePlan({
@@ -291,95 +324,95 @@ export default function SelectPlan() {
       </ScrollView>
 
 
-
+      {/* Bill modal start */}
       <Modal
-          visible={!!openBillModal}
-          onDismiss={() => setOpenBillModal(false)}
-          contentContainerStyle={{justifyContent: "center", alignItems: "center"}}
-        >
-          <View className="bg-[#DEF3F9] w-[90vw] h-[70vh] flex justify-center flex-col gap-6 p-4 rounded-lg z-10  ">
+        visible={!!openBillModal}
+        onDismiss={() => setOpenBillModal(false)}
+        contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}
+      >
+        <View className="bg-[#DEF3F9] w-[90vw] h-[70vh] flex justify-center flex-col gap-6 p-4 rounded-lg z-10  ">
 
 
 
-            <View className="bg-white m-4 rounded-xl shadow-md border border-[#0784C9]/20">
-              <Text className="text-center font-bold text-lg text-[#003B70] py-4">
-                📄 Invoice / Bill
-              </Text>
-
-            </View>
-
-            <View className="bg-white rounded-xl border-2 border-[#0784C9] p-5 mt-2 shadow-lg">
-
-              <View className="text-center mb-5">
-                <Text className="text-lg font-bold text-[#003B70] mb-2">
-                  Thank you for your purchase!
-                </Text>
-                <Text className="text-xs text-[#0784C9] font-medium">
-                  Here is the breakdown of your bill:
-                </Text>
-              </View>
-
-              <View className="bg-[#DEF3F9] rounded-xl p-4 border border-[#0784C9]/20">
-                <View className="flex-row justify-between items-center py-2">
-                  <Text className="font-semibold text-sm text-[#003B70]">
-                    Base Amount
-                  </Text>
-                  <Text className="text-sm font-bold text-[#0784C9]">
-                    ₹ {choosePlan?.plan}
-                  </Text>
-                </View>
-                <View className="flex-row justify-between items-center py-2">
-                  <Text className="font-semibold text-sm text-[#003B70]">
-                    CGST (9%)
-                  </Text>
-                  <Text className="text-sm font-bold text-[#0784C9]">
-                    ₹ {choosePlan?.CGST}
-                  </Text>
-                </View>
-                <View className="flex-row justify-between items-center py-2">
-                  <Text className="font-semibold text-sm text-[#003B70]">
-                    SGST (9%)
-                  </Text>
-                  <Text className="text-sm font-bold text-[#0784C9]">
-                    ₹ {choosePlan?.SGST}
-                  </Text>
-                </View>
-         
-                <View className="flex-row justify-between items-center py-3 bg-[#0784C9]/10 rounded-lg px-2">
-                  <Text className="font-bold text-base text-[#003B70]">
-                    Total Payable
-                  </Text>
-                  <Text className="font-bold text-base text-[#0784C9]">
-                    ₹ {choosePlan?.total}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <View className="flex-row justify-between items-center p-4 bg-white m-4 rounded-xl shadow-md border border-[#0784C9]/20">
-              <TouchableOpacity
-                onPress={() => setOpenBillModal(false)}
-                className="py-2.5 px-5 rounded-lg border-2 border-[#0784C9]"
-              >
-                <Text className="text-[#0784C9] font-bold text-xs">← Back</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setOpenBillModal(false);
-                  router.push("/employer/Screens/checkOut");
-                }}
-                className="py-2.5 px-5 rounded-lg bg-[#0784c9] z-5"
-              >
-                <Text className="text-white font-bold text-xs">
-                  Confirm & Pay 💳
-                </Text>
-              </TouchableOpacity>
-            </View>
-
+          <View className="bg-white m-4 rounded-xl shadow-md border border-[#0784C9]/20">
+            <Text className="text-center font-bold text-lg text-[#003B70] py-4">
+              📄 Invoice / Bill
+            </Text>
 
           </View>
-        </Modal>
 
+          <View className="bg-white rounded-xl border-2 border-[#0784C9] p-5 mt-2 shadow-lg">
+
+            <View className="text-center mb-5">
+              <Text className="text-lg font-bold text-[#003B70] mb-2">
+                Thank you for your purchase!
+              </Text>
+              <Text className="text-xs text-[#0784C9] font-medium">
+                Here is the breakdown of your bill:
+              </Text>
+            </View>
+
+            <View className="bg-[#DEF3F9] rounded-xl p-4 border border-[#0784C9]/20">
+              <View className="flex-row justify-between items-center py-2">
+                <Text className="font-semibold text-sm text-[#003B70]">
+                  Base Amount
+                </Text>
+                <Text className="text-sm font-bold text-[#0784C9]">
+                  ₹ {choosePlan?.plan}
+                </Text>
+              </View>
+              <View className="flex-row justify-between items-center py-2">
+                <Text className="font-semibold text-sm text-[#003B70]">
+                  CGST (9%)
+                </Text>
+                <Text className="text-sm font-bold text-[#0784C9]">
+                  ₹ {choosePlan?.CGST}
+                </Text>
+              </View>
+              <View className="flex-row justify-between items-center py-2">
+                <Text className="font-semibold text-sm text-[#003B70]">
+                  SGST (9%)
+                </Text>
+                <Text className="text-sm font-bold text-[#0784C9]">
+                  ₹ {choosePlan?.SGST}
+                </Text>
+              </View>
+
+              <View className="flex-row justify-between items-center py-3 bg-[#0784C9]/10 rounded-lg px-2">
+                <Text className="font-bold text-base text-[#003B70]">
+                  Total Payable
+                </Text>
+                <Text className="font-bold text-base text-[#0784C9]">
+                  ₹ {choosePlan?.total}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <View className="flex-row justify-between items-center p-4 bg-white m-4 rounded-xl shadow-md border border-[#0784C9]/20">
+            <TouchableOpacity
+              onPress={() => setOpenBillModal(false)}
+              className="py-2.5 px-5 rounded-lg border-2 border-[#0784C9]"
+            >
+              <Text className="text-[#0784C9] font-bold text-xs">← Back</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setOpenBillModal(false);
+                router.push("/employer/Screens/checkOut");
+              }}
+              className="py-2.5 px-5 rounded-lg bg-[#0784c9] z-5"
+            >
+              <Text className="text-white font-bold text-xs">
+                Confirm & Pay 💳
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+
+        </View>
+      </Modal>
+      {/* bill modal end */}
 
 
     </KeyboardAvoidingView>

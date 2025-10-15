@@ -26,7 +26,8 @@ const CompanyProfile = () => {
         dispatch(fetchEmployerProfile());
     }, [dispatch]);
     const { employer } = useSelector((state) => state.getDataReducer);
-
+    console.log("emp",employer);
+    
 
     useEffect(() => {
         if (employer) {
@@ -96,10 +97,10 @@ const CompanyProfile = () => {
 
     return (
         <ScrollView
-            className="w-full h-full mx-auto  px-4 pb-10 bg-[#DEF3F9] flex flex-col gap-2"
+            className="w-full h-full mx-auto px-4 pb-10 bg-[#DEF3F9] flex flex-col gap-2"
         >
 
-          
+
             {/* Alert */}
             <View
                 className="flex flex-col border-l-4 text-sm mb-4 rounded p-4 mt-4"
@@ -121,26 +122,30 @@ const CompanyProfile = () => {
 
 
 
-            <View className="bg-white rounded shadow-lg shadow-gray-500 p-6 h-full w-full">
+            <View className="bg-white rounded shadow-lg shadow-gray-500 p-6 w-full mb-20">
                 <Text className="text-xl font-bold mb-4 text-[#003B70]">
                     Company details
                 </Text>
 
                 <View className="flex-row items-start space-x-4 gap-2 mb-6">
                     {employer?.company?.logoUrl ? (
+                        <TouchableOpacity
+                        onPress={() => setOpenFileModal("logo")}
+                        >
                         <Image
                             source={{ uri: employer?.company.logoUrl }}
-                            className="w-14 h-14 rounded-full"
+                            className="w-14 h-14 rounded-full border-2 border-[#0784C9] "
                         />
-
+                        </TouchableOpacity>
                     ) : (
+                        <TouchableOpacity>
                         <View className="w-14 h-14 rounded-full flex items-center justify-center font-semibold text-lg"
                             style={{ backgroundColor: "#0784C9" }}>
                             <Text className="text-white text-lg">
                                 {employer?.company?.companyName?.split("")[0]?.toUpperCase()}
                             </Text>
                         </View>
-
+                        </TouchableOpacity>
                     )}
 
                     <View className="flex-1">
@@ -148,7 +153,7 @@ const CompanyProfile = () => {
                             <Text className="text-xl font-bold text-[#003B70]">
                                 {employer?.company?.companyName || "Your Company Name"}
                             </Text>
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 onPress={() => setOpenFileModal("logo")}
                                 className="flex-row items-center px-3 py-1 gap-1 rounded-md text-xs font-medium transition-all duration-200"
                                 style={{
@@ -160,7 +165,7 @@ const CompanyProfile = () => {
                             >
                                 <PlusCircle size={12} className="mr-1 text-[#0784C9]" />
                                 <Text className="text-[#0784C9] text-xs">Update Logo</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
 
                         </View>
                         <View className="flex-row flex-wrap gap-2">
@@ -180,7 +185,7 @@ const CompanyProfile = () => {
                 </View>
 
                 {/* Info List */}
-                <View className=" pr-2">
+                <View className="pr-2">
                     {fields.map((item, index) => {
                         const hasValue = item.value && item.value !== "Not available";
                         return (
@@ -190,9 +195,22 @@ const CompanyProfile = () => {
                                     }`}
                             >
                                 <View>
+                                    <View className={`flex-row justify-between items-center pb-2 w-full`}>
                                     <Text className="text-sm font-semibold text-[#003B70]">
                                         {item.label}
                                     </Text>
+                                    <TouchableOpacity
+                                        onPress={() => showUpdateModal(item)}
+                                        className="flex-row  items-center gap-2 hover:underline text-sm px-3 py-1 rounded-md transition-all duration-200"
+                                        style={{
+                                            color: "#0784C9",
+                                            backgroundColor: "rgba(7, 132, 201, 0.1)",
+                                        }}
+                                    >
+                                        <PlusCircle size={16} className="mr-1" />
+                                        <Text className="text-[#0784C9] text-sm">Suggest</Text>
+                                    </TouchableOpacity>
+                                    </View>
                                     <Text
                                         className={`text-sm ${item.value === "Not available" ? "italic text-gray-500" : "text-[#003B70]"
                                             }`}
@@ -200,28 +218,17 @@ const CompanyProfile = () => {
                                         {item.value}
                                     </Text>
                                 </View>
-                                <TouchableOpacity
-                                    onPress={() => showUpdateModal(item)}
-                                    className="flex-row  items-center gap-2 hover:underline text-sm px-3 py-1 rounded-md transition-all duration-200"
-                                    style={{
-                                        color: "#0784C9",
-                                        backgroundColor: "rgba(7, 132, 201, 0.1)",
-                                    }}
-                                >
-                                    <PlusCircle size={16} className="mr-1" />
-                                    <Text className="text-[#0784C9] text-sm">Suggest</Text>
-                                </TouchableOpacity>
+
                             </View>
                         );
                     })}
                 </View>
 
-                
             </View>
 
             {/* Social Profiles */}
-           
-           
+
+
             {/* Modals will be handled via component state/router modal logic */}
 
             {openFileModal && (

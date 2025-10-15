@@ -5,7 +5,7 @@ import { HandCoins, DatabaseIcon, User } from 'lucide-react-native'
 import { fetchEmployerProfile, fetchCredits } from "../Redux/getData";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apiFunction } from "../api/apiFunction";
-import { logOutApi } from "../api/api";
+import { logOutApi, profilePicUploadApi } from "../api/api";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 import { Divider, Menu } from "react-native-paper";

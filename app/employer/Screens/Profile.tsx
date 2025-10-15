@@ -24,24 +24,31 @@ import Toast from "react-native-toast-message";
 
 const ProfileUpdate = () => {
   const [isDisabled, setIsDisabled] = useState(true);
-  const dispatch = useDispatch();
   const [showGstInformation, setShowGstnformation] = useState(false);
   const [gstInformation, setGstInformation] = useState(null);
+  const [user, setUser] = useState(null);
   const gstRef = useRef();
+  const dispatch = useDispatch();
+
 
   useEffect(() => {
     dispatch(fetchEmployerProfile());
+   const getUser = async () => {
+    const userr = await AsyncStorage.getItem("User");
+    if (userr) {
+      setUser(JSON.parse(userr))
+    }
+
+  }
+    getUser();
+
   }, [dispatch]);
 
+  console.log("bgbdsh", user);
   const { employer } = useSelector((state) => state.getDataReducer);
 
-  let user;
-  const getuser =  async() =>{
-    user = await AsyncStorage.getItem("User"); 
-  }
-  
-   getuser();
-  
+
+
 
   const {
     control,
@@ -58,7 +65,7 @@ const ProfileUpdate = () => {
     },
   });
 
-  
+
 
 
 
@@ -68,17 +75,17 @@ const ProfileUpdate = () => {
       reset({
         name: employer?.name,
         email: employer?.email,
-        mobile: "9540441958",
+        mobile: user?.phone,
       });
     }
   }, [employer]);
 
 
   const handleGstVerify = async (value) => {
-    
+
     const response = await gstVerify(value);
     const token = await AsyncStorage.getItem('Token')
-   
+
 
 
     if (response) {
@@ -162,15 +169,15 @@ const ProfileUpdate = () => {
   };
 
   return (
-   
- <KeyboardAvoidingView
+
+    <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
       className="flex-1  bg-[#DEF3F9]" // Removed padding from here
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
-      <ScrollView  className="pl-10 pr-10 mt-5 mb-10" contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView className="pl-10 pr-10 mt-5 mb-10" contentContainerStyle={{ flexGrow: 1 }}>
         <View
-          className="bg-white rounded-md shadow-xl mb-5" 
+          className="bg-white rounded-md shadow-xl mb-5"
           style={{
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 4 },
@@ -238,7 +245,7 @@ const ProfileUpdate = () => {
                   <Controller
                     control={control}
                     name="email"
-                    rules={{ required: "Name is required" }}
+                    rules={{ required: "Email is required" }}
                     render={({ field: { value, onChange } }) => (
                       <TextInput
                         value={value}
@@ -264,12 +271,12 @@ const ProfileUpdate = () => {
                   <Controller
                     control={control}
                     name="mobile"
-                    rules={{ required: "Name is required" }}
+                    rules={{ required: "Number is required" }}
                     render={({ field: { value, onChange } }) => (
                       <TextInput
                         value={value}
                         onChangeText={onChange}
-                        editable={isDisabled}
+                        editable={false}
                         placeholder="Enter name"
                         className={`w-full px-4 py-3 rounded-md border bg-gray-100 ${errors.name ? "border-red-600" : "border-gray-300"}`}
                         style={{ color: "#003B70" }}
@@ -307,7 +314,7 @@ const ProfileUpdate = () => {
                           borderColor: "#d1d5db",
                           backgroundColor: employer?.is_verified ? "#f9fafb" : "white",
                           color: employer?.is_verified ? "#6b7280" : "#003B70",
-                        
+
                         }}
                       />
                     )}
@@ -318,8 +325,8 @@ const ProfileUpdate = () => {
                     onPress={() => handleGstVerify(getValues('gstin'))}
                     disabled={employer?.is_verified}
                     className={`w-full py-3 rounded-md text-sm font-medium transition-all duration-200 mt-2 ${employer?.is_verified
-                        ? "bg-gray-200 border border-gray-300"
-                        : "bg-transparent border-2 border-[#0784C9]"
+                      ? "bg-gray-200 border border-gray-300"
+                      : "bg-transparent border-2 border-[#0784C9]"
                       }`}
                   >
                     <Text

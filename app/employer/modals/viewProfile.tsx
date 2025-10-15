@@ -18,7 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { fetchJobsById } from "../../Redux/getData";
 import { apiFunction } from "../../api/apiFunction";
 // import { showErrorToast, showSuccessToast } from "../../ui/toast"; // Assuming these are implemented for Native
-import { handlestring } from "../../utilsFunctions/functions"
+import  handlestring  from "../../utilsFunctions/functions"
 import { applyJobApi } from "@/app/api/api";
 import Toast from "react-native-toast-message";
 // import { applyJobApi } from "@/app/api/api";

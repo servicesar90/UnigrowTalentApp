@@ -1,6 +1,6 @@
 const handlestring =(string, length, showFull)=>{
     let cutString = string;
-    if(string.length >length){
+    if(string?.length > length){
          cutString = `${string.slice(0,length)}...`;
     }
     if(showFull){
