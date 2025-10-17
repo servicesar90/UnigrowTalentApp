@@ -79,20 +79,20 @@ export default function UnigrowOnboardingForm() {
 
   };
 
-  const logout = async () => {
-    const response = await apiFunction(logOutApi, null, {}, "post", true);
-        if (response) {
-            await AsyncStorage.removeItem("Token");
-            await AsyncStorage.removeItem("User");
-            router.replace("/landingpage");
-        } else {
-            Toast.show({
-                type: "error",
-                text1: "Logout",
-                text2: "could not Logout! Try again"
-            })
-        }
-  }
+    const logout = async () => {
+      const response = await apiFunction(logOutApi, null, {}, "post", true);
+          if (response) {
+              await AsyncStorage.removeItem("Token");
+              await AsyncStorage.removeItem("User");
+              router.replace("/landingpage");
+          } else {
+              Toast.show({
+                  type: "error",
+                  text1: "Logout",
+                  text2: "could not Logout! Try again"
+              })
+          }
+    }
 
   return (
     <ScrollView

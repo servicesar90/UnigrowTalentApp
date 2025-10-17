@@ -11,6 +11,7 @@ const EmployeeLayout = () => {
   }}>
         <Stack.Screen name='employeeLogin' options={{headerShown: false }} />
         <Stack.Screen name='header' options={{headerShown: false}} />
+        <Stack.Screen name='createProfile' options={{ headerShown: false }} />
         <Stack.Screen name='tab/(tabs)' options={{headerShown: false}} />
     </Stack>
 

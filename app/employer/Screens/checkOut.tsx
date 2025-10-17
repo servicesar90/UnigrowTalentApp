@@ -64,7 +64,6 @@ const Checkout = () => {
 
 
         if (res) {
-          console.log('fbedb', res)
           if (jobData) {
             await apiFunction(jobPostApi, null, jobData, "post", true)
             dispatch(setJobData(null))
@@ -112,11 +111,13 @@ const Checkout = () => {
       checkRef.current = true;
 
       if (plan?.name !== "Basic") {
+        
         const giveData = async () => {
           const response = await apiFunction(giveRazorpayApi, null, { id: plan?.id, price: plan?.price }, "post", true);
           if (response) {
-          
-            await loadRazorpay(plan, response.orderId, jobData);
+            if(response?.orderId){
+              await loadRazorpay(plan, response?.orderId, jobData);
+            }
 
           }
         };

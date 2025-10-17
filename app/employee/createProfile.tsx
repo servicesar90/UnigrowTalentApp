@@ -6,9 +6,10 @@ import { Controller, useForm } from "react-hook-form";
 import { Button, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import RadioGroup from 'react-native-radio-buttons-group';
 import { apiFunction } from "../api/apiFunction";
-import { createEmpProfile } from "../api/api";
+import { createEmpProfile, logOutApi } from "../api/api";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function CreateProfileScreen() {
     const [steps, setSteps] = useState(0);
@@ -26,6 +27,8 @@ export default function CreateProfileScreen() {
         setValue,
         formState: { errors },
     } = useForm({
+        mode: "onChange",
+        reValidateMode: "onChange",
         defaultValues: {
             fullName: null,
             dob: null,
@@ -74,7 +77,6 @@ export default function CreateProfileScreen() {
     const toggleSelection = (name, item, selected, setSelected) => {
 
         if (selected.includes(item)) {
-            console.log(item)
             setSelected(selected.filter((x) => x !== item));
             setValue(name, selected.filter((x) => x !== item))
         } else {
@@ -117,7 +119,7 @@ export default function CreateProfileScreen() {
     const onSubmit = async (data: any) => {
 
         const response = await apiFunction(createEmpProfile, null, data, "post", true);
-        
+
         if (response?.status === 409) return Toast.show({
             type: "error",
             text1: "Employer already exist.",
@@ -133,12 +135,38 @@ export default function CreateProfileScreen() {
         }
     };
 
+    // Logout Function
+    const logout = async () => {
+        const response = await apiFunction(logOutApi, null, {}, "post", true);
+        if (response) {
+            await AsyncStorage.removeItem("Token");
+            await AsyncStorage.removeItem("User");
+            router.replace("/landingpage");
+        } else {
+            Toast.show({
+                type: "error",
+                text1: "Logout",
+                text2: "could not Logout! Try again"
+            })
+        }
+    }
+
     return (
-        <View className="flex-1 bg-[#def3f9]">
+        <View className="flex-1 bg-[#def3f9] mt-10">
+            {/* Header */}
+            <View className="flex flex-row justify-between items-center m-8">
+
+                <TouchableOpacity
+                    className="bg-[#003B70] px-4 py-2 rounded-full"
+                    onPress={logout}
+                >
+                    <Text className="text-white font-medium">Logout</Text>
+                </TouchableOpacity>
+            </View>
 
             {/* Step 1 */}
             {steps === 0 && (
-                <ScrollView contentContainerClassName="p-4 gap-4">
+                <ScrollView contentContainerClassName="bg-white rounded-2xl shadow p-5 m-5 gap-4">
                     <Text className="text-lg font-semibold">Basic Details</Text>
 
                     {/* Full Name */}
@@ -146,16 +174,24 @@ export default function CreateProfileScreen() {
                     <Controller
                         control={control}
                         name="fullName"
-                        rules={{ required: "Name is Require" }}
-                        render={({ field: { onChange, value } }) => {
+                        rules={{
+                            required: "Name is Require",
+                            minLength: {
+                                value: 4,
+                                message: "Name must be at least 4 characters long",
+                            },
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => {
                             return (
                                 <TextInput
                                     placeholder="Full Name"
                                     cursorColor="#0784c9"
                                     enterKeyHint="next"
+                                    value={value}
                                     placeholderTextColor="gray"
                                     onChangeText={onChange}
-                                    className="bg-white p-4 text-gray-700"
+                                    onBlur={onBlur}
+                                    className="bg-white border border-[#0784c9] rounded p-4 text-gray-700"
                                 />)
                         }
 
@@ -178,9 +214,9 @@ export default function CreateProfileScreen() {
                             return (
                                 <View className="bg-black-500">
 
-                                    <TouchableOpacity className="bg-white p-4" onPress={() => setShow(!show)}>
+                                    <TouchableOpacity className="bg-white border border-[#0784c9] rounded p-4" onPress={() => setShow(!show)}>
 
-                                        <Text className="text-gray-500 ">{dob ? dob : "Date Of Birth"} </Text>
+                                        <Text className="text-gray-700 ">{value ? value : "Date Of Birth"} </Text>
 
                                     </TouchableOpacity>
 
@@ -217,13 +253,13 @@ export default function CreateProfileScreen() {
                         control={control}
                         name="gender"
                         rules={{ required: true }}
-                        render={({ field: { onChange, value } }) => (
+                        render={({ field: { onChange, onBlur, value } }) => (
                             <RadioGroup
                                 radioButtons={radioButtons}
                                 onPress={(id) => {
                                     const selected = radioButtons.find(rb => rb.id === id);
-                                    console.log(selected?.value);
                                     onChange(selected?.value);
+                                    onBlur(selected?.value)
                                 }}
                                 containerStyle={{
                                     flexDirection: "row",
@@ -244,19 +280,21 @@ export default function CreateProfileScreen() {
                         control={control}
                         name="email"
                         rules={{
+                            required: "Email is required.",
                             pattern: {
                                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                                 message: "Enter a valid email address",
                             },
                         }}
-                        render={({ field: { onChange, value } }) => (
+                        render={({ field: { onChange, onBlur, value } }) => (
                             <TextInput
                                 placeholder="Email"
                                 placeholderTextColor="gray"
                                 keyboardType="email-address"
                                 value={value}
-                                onChangeText={onChange}
-                                className="bg-white p-4"
+                                onChangeText={(text) => onChange(text.trim())}
+                                onBlur={onBlur}
+                                className="bg-white border border-[#0784c9] rounded p-4"
                             />
                         )}
                     />

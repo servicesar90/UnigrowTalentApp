@@ -253,7 +253,7 @@ const ProfileUpdate = () => {
                         editable={!isDisabled}
                         placeholder="Enter Email"
                         className={`w-full px-4 py-3 rounded-md border ${isDisabled ? "bg-gray-100" : "bg-white"
-                          } ${errors.name ? "border-red-600" : "border-gray-300"}`}
+                          } ${errors.email ? "border-red-600" : "border-gray-300"}`}
                         style={{ color: "#003B70" }}
                       />
                     )}
@@ -271,23 +271,22 @@ const ProfileUpdate = () => {
                   <Controller
                     control={control}
                     name="mobile"
-                    rules={{ required: "Number is required" }}
                     render={({ field: { value, onChange } }) => (
                       <TextInput
                         value={value}
                         onChangeText={onChange}
                         editable={false}
                         placeholder="Enter name"
-                        className={`w-full px-4 py-3 rounded-md border bg-gray-100 ${errors.name ? "border-red-600" : "border-gray-300"}`}
+                        className={`w-full px-4 py-3 rounded-md border bg-gray-100 ${errors.mobile ? "border-red-600" : "border-gray-300"}`}
                         style={{ color: "#003B70" }}
                       />
                     )}
                   />
-                  {errors.mobile && (
+                  {/* {errors.mobile && (
                     <Text className="text-sm mt-1 text-red-600">
                       {errors.mobile?.message}
                     </Text>
-                  )}
+                  )} */}
                 </View>
               </View>
             </View>

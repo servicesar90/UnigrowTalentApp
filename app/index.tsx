@@ -53,7 +53,7 @@ export default function IntroScreen() {
 
           router.replace("/employee/tab/(tabs)/home/home")
         }else{
-          router.replace("/employer/createProfile")
+          router.replace("/employee/createProfile")
         }
       }
     }else if(hasSeenIntro && !loggedIn){

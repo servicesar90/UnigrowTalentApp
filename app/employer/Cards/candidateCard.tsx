@@ -149,6 +149,7 @@ const CandidateCard = ({ candidate }) => {
                     return
                 } else if (response) {
                     setCandidateDetail(response.data);
+                    dispatch(fetchCredits());
                 } else {
                     return Toast.show({
                         type: "error",
