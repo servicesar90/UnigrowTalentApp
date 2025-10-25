@@ -894,12 +894,15 @@ export default function EmployeeProfile() {
                       ? employee?.prefferedEmploymentTypes
                       : JSON.parse(employee?.prefferedEmploymentTypes)
                     )?.map((role, index) => (
+                       <View  key={index} className="bg-[#1e40af] px-2 py-0.5 rounded-full items-center justify-center">
+
                       <Text
                         key={index}
-                        className="bg-[#1e40af] flex align text-white px-2 py-0.5 rounded-full text-xs font-medium"
-                      >
+                        className="text-white text-xs font-medium text-center p-1"
+                        >
                         {role}
                       </Text>
+                      </View>
                     ))}
 
                   {/* Shifts */}
@@ -922,12 +925,15 @@ export default function EmployeeProfile() {
                   {employee?.preferredLocationTypes &&
                     JSON.parse(employee?.preferredLocationTypes || "[]").map(
                       (role, index) => (
+                         <View  key={index} className="bg-[#dff3f9] border border-[#0784C9] px-2 py-0.5 rounded-full items-center justify-center">
+
                         <Text
                           key={index}
-                          className="bg-[#dff3f9] border border-[#0784C9] text-[#1e40af] px-2 py-0.5 rounded-full text-xs font-medium"
-                        >
+                          className="bg-[#dff3f9] text-[#1e40af] text-xs font-medium text-center p-1"
+                          >
                           {role}
                         </Text>
+                        </View>
                       )
                     )}
                 </>
@@ -1310,7 +1316,7 @@ export default function EmployeeProfile() {
           skills: "multi",
         }}
         metaData={{
-          title: "  Edit skills",
+          title: "Edit skills",
           api: createEmpProfile,
           type: "patch",
           params: null,

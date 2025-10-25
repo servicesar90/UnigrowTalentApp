@@ -165,7 +165,7 @@ const EditExperienceModal = ({ data, Open, close, metaData, setInitials }) => {
                 render={({ field }) => (
                   <View>
                     <View className="flex-row flex-wrap gap-2 mb-2">
-                      {field?.value?.map((val, idx) => (
+                      {/* {field?.value?.map((val, idx) => (
                         <Chip
                           key={idx}
                           onClose={() => {
@@ -176,16 +176,30 @@ const EditExperienceModal = ({ data, Open, close, metaData, setInitials }) => {
                         >
                           {val}
                         </Chip>
-                      ))}
+                      ))} */}
+                      {Array.isArray(field?.value) &&
+                        field.value.map((val, idx) => (
+                          <Chip
+                            key={idx}
+                            onClose={() => {
+                              const remain = field.value.filter((item) => item !== val);
+                              field.onChange(remain);
+                            }}
+                            style={{ margin: 2 }}
+                          >
+                            {val}
+                          </Chip>
+                        ))}
                     </View>
                     <Autocomplete
-                      data={RoleSuggestion?.filter(
+                      data={Array.isArray(RoleSuggestion) ? RoleSuggestion?.filter(
                         (item) => !field?.value?.includes(item)
-                      )}
+                      ): []}
                       defaultValue=""
                       onChangeText={(text) => getRoleSuggestions(text)}
                       flatListProps={{
                         keyExtractor: (_, i) => i.toString(),
+                        scrollEnabled: false,
                         renderItem: ({ item }) => (
                           <TouchableOpacity
                             onPress={() => {
@@ -409,6 +423,7 @@ const EditExperienceModal = ({ data, Open, close, metaData, setInitials }) => {
                       onChangeText={(text) => getSkillsSuggestions(text)}
                       flatListProps={{
                         keyExtractor: (_, i) => i.toString(),
+                        scrollEnabled: false,
                         renderItem: ({ item }) => (
                           <TouchableOpacity
                             onPress={() => {
@@ -449,36 +464,36 @@ const EditExperienceModal = ({ data, Open, close, metaData, setInitials }) => {
               Notice Period
             </Text>
             <Controller
-            name="noticePeriod"
-            control={control}
-            render={({field})=>(
+              name="noticePeriod"
+              control={control}
+              render={({ field }) => (
 
-              <FlatList
-                data={noticePeriods}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={(item) => item}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      field.onChange(item)
-                      setButtonDisable(false);
-                    }}
-                    className={`px-3 py-1 m-1 rounded-md border ${watch("noticePeriod") === item
-                      ? "bg-blue-500 border-blue-500"
-                      : "bg-white border-gray-300"
-                      }`}
-                  >
-                    <Text
-                      className={`text-sm ${watch("noticePeriod") === item ? "text-white" : "text-gray-700"
+                <FlatList
+                  data={noticePeriods}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  keyExtractor={(item) => item}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      onPress={() => {
+                        field.onChange(item)
+                        setButtonDisable(false);
+                      }}
+                      className={`px-3 py-1 m-1 rounded-md border ${watch("noticePeriod") === item
+                        ? "bg-blue-500 border-blue-500"
+                        : "bg-white border-gray-300"
                         }`}
                     >
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              />
-            )}
+                      <Text
+                        className={`text-sm ${watch("noticePeriod") === item ? "text-white" : "text-gray-700"
+                          }`}
+                      >
+                        {item}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              )}
             />
 
             {/* startDate */}

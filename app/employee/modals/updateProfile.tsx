@@ -412,13 +412,19 @@ const DynamicModal = ({
 
                     {/* Autocomplete */}
                     <Autocomplete
-                      data={suggestionss?.filter(
-                        (item) => !selectedValues.includes(item)
-                      )}
+                      // data={(suggestionss || []).filter(
+                      //   (item) => !selectedValues.includes(item)
+                      // )}
+                      data={
+                        Array.isArray(suggestionss)
+                          ? suggestionss.filter((item) => !selectedValues.includes(item))
+                          : []
+                      }
                       defaultValue=""
                       onChangeText={(text) => getSuggestions(text, key)}
                       flatListProps={{
                         keyExtractor: (_, i) => i.toString(),
+                        scrollEnabled: false,
                         renderItem: ({ item }) => (
                           <TouchableOpacity
                             onPress={() => {
